@@ -1,5 +1,6 @@
 package com.nikunj.controller;
 
+import com.nikunj.model.DBConnection;
 import java.sql.*;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,12 +20,7 @@ public class alogin extends HttpServlet {
         String email = req.getParameter("email");
         String pass = req.getParameter("pass");
 
-        try {
-            String url = "jdbc:mysql://localhost:3306/phalbazar";
-            String unm = "root";
-            String password = "";
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection con = DriverManager.getConnection(url, unm, password);
+        try (Connection con = DBConnection.getConnection()) {
             String q1 = "select * from aregister where email=? and pass=?";
             PreparedStatement ps = con.prepareStatement(q1);
             ps.setString(1, email);
