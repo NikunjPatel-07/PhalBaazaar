@@ -19,6 +19,7 @@ public class Login extends HttpServlet {
         PrintWriter out = res.getWriter();
         String email = req.getParameter("email");
         String pass = req.getParameter("pass");
+        out.println("Hello"+System.getenv("DB_URL"));
 
         try (Connection con = DBConnection.getConnection()){
             String q1 = "select * from register where email=? and pass=?";

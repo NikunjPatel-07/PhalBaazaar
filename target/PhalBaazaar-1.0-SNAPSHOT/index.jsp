@@ -26,7 +26,7 @@
                         <h2 class="text-center text-danger mb-3 mb-md-4">
                             Welcome To PhalBazar
                         </h2>
-
+                        
                         <!-- Message from Servlet -->
                         <%
                             String msg = (String) request.getAttribute("msg");

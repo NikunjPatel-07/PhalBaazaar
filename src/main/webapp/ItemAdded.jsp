@@ -1,3 +1,5 @@
+<%@page import="java.sql.*"%>
+<%@page import="com.nikunj.model.DBConnection"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -19,10 +21,10 @@
             }
 
             .success-box {
-                max-width: 450px;
-                margin: 100px auto;
+                max-width: 700px;
+                margin: 60px auto;
                 background: white;
-                padding: 40px;
+                padding: 30px;
                 border-radius: 15px;
                 text-align: center;
                 box-shadow: 0 10px 25px rgba(0,0,0,0.1);
@@ -33,9 +35,9 @@
                 color: #28a745;
             }
 
-            .btn-group-custom a {
-                width: 100%;
-                margin-top: 10px;
+            .carousel img {
+                height: 300px;
+                object-fit: cover;
             }
         </style>
     </head>
@@ -51,16 +53,64 @@
             <h3 class="fw-bold">Items Added Successfully!</h3>
 
             <p class="text-muted">
-                Your selected products have been added to the Homepage.
+                Your product and images are now live.
             </p>
 
-            <div class="btn-group-custom mt-4">
+            <hr>
 
-                
+            <%
+                Connection con = DBConnection.getConnection();
+                PreparedStatement ps = con.prepareStatement(
+                        "SELECT image_path FROM product_images ORDER BY id DESC LIMIT 5"
+                );
+                ResultSet rs = ps.executeQuery();
+
+                int count = 0;
+            %>
+
+            <% if (rs.next()) { %>
+
+            <!-- 🚀 CAROUSEL -->
+            <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+
+                <div class="carousel-inner">
+
+                    <%
+                        do {
+                            String img = rs.getString("image_path");
+                    %>
+
+                    <div class="carousel-item <%= (count == 0 ? "active" : "")%>">
+                        <img src="<%= img%>" class="d-block w-100">
+                    </div>
+
+                    <%
+                            count++;
+                        } while (rs.next());
+                    %>
+
+                </div>
+
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                </button>
+
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                </button>
 
             </div>
 
+            <% } else { %>
+
+            <p>No images found</p>
+
+            <% }%>
+
         </div>
+
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     </body>
 </html>
