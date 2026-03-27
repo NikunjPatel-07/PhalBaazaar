@@ -1,6 +1,5 @@
 package com.nikunj.controller;
 
-import com.nikunj.model.DBConnection;
 import java.sql.*;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,7 +25,12 @@ public class ARegistration extends HttpServlet {
 
         if ((password = cpassword).length() >= 8) {
 
-            try (Connection con = DBConnection.getConnection()) {
+            try {
+                String url = "jdbc:mysql://localhost:3306/phalbazar";
+                String unm = "root";
+                String pass = "";
+                Class.forName("com.mysql.jdbc.Driver");
+                Connection con = DriverManager.getConnection(url, unm, pass);
                 String q1 = "insert into aregister(unm,email,pass) values(?,?,?)";
                 PreparedStatement ps = con.prepareStatement(q1);
                 ps.setString(1, username);
