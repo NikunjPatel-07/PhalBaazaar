@@ -1,6 +1,5 @@
 <%@page import="com.nikunj.model.DBConnection"%>
 <%@page import="java.sql.*"%>
-<%@page import="com.nikunj.*"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 
 <!DOCTYPE html>
@@ -8,176 +7,176 @@
     <head>
         <title>PhalBazar - Home</title>
 
+        <!-- Mobile -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Bootstrap -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- Owl Carousel -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
 
         <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 20px;
-                background-color: #f4f4f4;
-            }
-
-            h1 { text-align: center; color: #2e7d32; }
-
-            /* --- HORIZONTAL LAYOUT --- */
-            .product-container {
-                display: flex;         /* Horizontal row */
-                flex-wrap: wrap;       /* Move to next line if full */
-                justify-content: center; 
-                gap: 20px;             /* Space between cards */
-                padding: 20px;
-                margin-bottom: 100px;  /* Space for fixed button */
-            }
-
-            .product {
-                border: 1px solid #ddd;
-                padding: 15px;
-                width: 280px;          /* Width of each card */
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-
-            .product img {
-                width: 100%;
-                height: 180px;
-                object-fit: cover;
-                border-radius: 5px;
-            }
-
-            .quantity-box {
-                display: inline-flex;
-                border: 2px solid black;
-                border-radius: 6px;
+            .product-card {
+                border-radius: 15px;
                 overflow: hidden;
-                margin: 10px 0;
+                transition: transform 0.2s;
+            }
+
+            .product-card:hover {
+                transform: translateY(-5px);
+            }
+
+            .product-img {
+                height: 200px;
+                object-fit: cover;
             }
 
             .quantity-box button {
-                width: 30px;
-                border: none;
-                cursor: pointer;
-                background: #eee;
+                width: 35px;
             }
 
-            .quantity-box input {
-                width: 40px;
-                text-align: center;
-                border: none;
-                font-weight: bold;
-            }
-
-            /* --- FIXED BOTTOM ACTION BAR --- */
             .bottom-bar {
                 position: fixed;
                 bottom: 0;
-                left: 0;
                 width: 100%;
                 background: white;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 -5px 10px rgba(0,0,0,0.1);
+                padding: 15px;
+                box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
                 z-index: 1000;
-            }
-
-            .bulk-add-btn {
-                background-color: #2e7d32;
-                color: white;
-                border: none;
-                padding: 15px 50px;
-                border-radius: 5px;
-                font-size: 18px;
-                font-weight: bold;
-                cursor: pointer;
             }
         </style>
     </head>
 
-    <body>
+    <body class="bg-light">
 
-        <h1>PhalBazar Products</h1>
+        <div class="container py-4">
 
-        <form action="addtocart" method="post">
-            
-            <div class="product-container">
+            <h2 class="text-center text-success mb-4">PhalBazar Products</h2>
 
-                <%
-                    Connection con = null;
-                    int i = 0; // Index for different items
-                    try {
-                        con = DBConnection.getConnection();
-                        PreparedStatement psProduct = con.prepareStatement("SELECT * FROM products");
-                        ResultSet rsProduct = psProduct.executeQuery();
+            <form action="addtocart" method="post">
 
-                        while (rsProduct.next()) {
-                            int productId = rsProduct.getInt("id");
-                            String name = rsProduct.getString("name");
-                            double price = rsProduct.getDouble("price");
-                %>
+                <div class="row g-4">
 
-                <div class="product">
-                    <div class="owl-carousel">
-                        <%
-                            PreparedStatement psImage = con.prepareStatement("SELECT image_path FROM product_images WHERE product_id=?");
-                            psImage.setInt(1, productId);
-                            ResultSet rsImage = psImage.executeQuery();
-                            while (rsImage.next()) {
-                        %>
-                        <div>
-                            <img src="<%= request.getContextPath()%>/product-image?name=<%= rsImage.getString("image_path")%>">
+                    <%
+                        Connection con = null;
+                        int i = 0;
+                        try {
+                            con = DBConnection.getConnection();
+                            PreparedStatement psProduct = con.prepareStatement("SELECT * FROM products");
+                            ResultSet rsProduct = psProduct.executeQuery();
+
+                            while (rsProduct.next()) {
+                                int productId = rsProduct.getInt("id");
+                                String name = rsProduct.getString("name");
+                                double price = rsProduct.getDouble("price");
+                    %>
+
+                    <!-- PRODUCT CARD -->
+                    <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+
+                        <div class="card product-card shadow-sm">
+
+                            <!-- CAROUSEL -->
+                            <div class="owl-carousel">
+                                <%
+                                    PreparedStatement psImage = con.prepareStatement("SELECT image_path FROM product_images WHERE product_id=?");
+                                    psImage.setInt(1, productId);
+                                    ResultSet rsImage = psImage.executeQuery();
+
+                                    while (rsImage.next()) {
+                                %>
+                                <div>
+                                    <img class="w-100 product-img"
+                                         src="<%= request.getContextPath()%>/product-image?name=<%= rsImage.getString("image_path")%>">
+                                </div>
+                                <% }
+                            rsImage.close();
+                            psImage.close();%>
+                            </div>
+
+                            <div class="card-body text-center">
+
+                                <h5><%= name%></h5>
+                                <p class="text-success fw-bold">$<%= price%></p>
+
+                                <!-- QUANTITY -->
+                                <div class="d-flex justify-content-center align-items-center gap-2 mb-2">
+
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="decrease(this)">-</button>
+
+                                    <input type="text"
+                                           name="quantity_<%= i%>"
+                                           value="0"
+                                           class="form-control text-center"
+                                           style="width:60px;" readonly>
+
+                                    <button type="button" class="btn btn-outline-secondary btn-sm" onclick="increase(this)">+</button>
+
+                                </div>
+
+                                <input type="hidden" name="productId_<%= i%>" value="<%= productId%>">
+
+                            </div>
+
                         </div>
-                        <% } rsImage.close(); psImage.close(); %>
+
                     </div>
 
-                    <h3><%= name%></h3>
-                    <p style="color:green; font-weight: bold;">$<%= price%></p>
-
-                    <div class="quantity-box">
-                        <button type="button" onclick="decrease(this)">-</button>
-                        <input type="text" name="quantity_<%= i %>" value="0" readonly>
-                        <button type="button" onclick="increase(this)">+</button>
-                    </div>
-
-                    <input type="hidden" name="productId_<%= i %>" value="<%= productId%>">
+                    <%
+                                i++;
+                            }
+                        } catch (Exception e) {
+                            out.println(e.getMessage());
+                        } finally {
+                            if (con != null) {
+                                con.close();
+                            }
+                        }
+                    %>
 
                 </div>
 
-                <%
-                        i++; // Increment index
-                        }
-                    } catch (Exception e) { out.println(e.getMessage()); }
-                    finally { if (con != null) con.close(); }
-                %>
+                <input type="hidden" name="totalItems" value="<%= i%>">
 
-            </div>
+                <!-- BOTTOM BAR -->
+                <div class="bottom-bar text-center">
+                    <button type="submit" class="btn btn-success btn-lg px-5">
+                        Add Selected Items & Go to Cart
+                    </button>
+                </div>
 
-            <input type="hidden" name="totalItems" value="<%= i %>">
+            </form>
 
-            <div class="bottom-bar">
-                <button type="submit" class="bulk-add-btn">Add Selected Items & Go to Bill</button>
-            </div>
+        </div>
 
-        </form>
-
+        <!-- JS -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $('.owl-carousel').owlCarousel({ items: 1, loop: true, dots: true, autoplay: true });
-            });
+                                        $(document).ready(function () {
+                                            $('.owl-carousel').owlCarousel({
+                                                items: 1,
+                                                loop: true,
+                                                dots: true,
+                                                autoplay: true
+                                            });
+                                        });
 
-            function increase(btn) {
-                let input = btn.parentElement.querySelector("input");
-                input.value = parseInt(input.value) + 1;
-            }
+                                        function increase(btn) {
+                                            let input = btn.parentElement.querySelector("input");
+                                            input.value = parseInt(input.value) + 1;
+                                        }
 
-            function decrease(btn) {
-                let input = btn.parentElement.querySelector("input");
-                let val = parseInt(input.value);
-                if (val > 0) input.value = val - 1;
-            }
+                                        function decrease(btn) {
+                                            let input = btn.parentElement.querySelector("input");
+                                            let val = parseInt(input.value);
+                                            if (val > 0)
+                                                input.value = val - 1;
+                                        }
         </script>
+
     </body>
 </html>

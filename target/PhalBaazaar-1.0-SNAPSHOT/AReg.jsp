@@ -2,40 +2,81 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Admin Portal</title>
-    </head>
-    <body>
+<head>
+    <title>Admin Registration</title>
 
-        <h1>Admin Registration</h1>
+    <!-- Mobile responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Error Message (from Servlet) -->
-        <%
-            String msg = (String) request.getAttribute("msg");
-            if (msg != null) {
-        %>
-        <p style="color:red;"><%= msg%></p>
-        <%
-            }
-        %>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-        <form action="ARegistration" method="post">
-            Enter The Username :
-            <input type="text" name="aunm" required><br><br>
+<body class="bg-light d-flex align-items-center min-vh-100">
 
-            Enter The Email-id :
-            <input type="email" name="aeid" required><br><br>
+<div class="container">
 
-            Enter The Password :
-            <input type="password" name="apass" required><br><br>
+    <div class="row justify-content-center">
 
-            Enter The Confirm Password :
-            <input type="password" name="acfmpass" required><br><br>
+        <!-- Responsive column -->
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
 
-            <input type="submit" value="Register">
+            <div class="card shadow-lg border-0 rounded-4 p-3 p-md-4">
 
-            <a href="aLogin.jsp">Login</a><br>
-        </form>
+                <h2 class="text-center text-primary mb-3 mb-md-4">
+                    Admin Registration
+                </h2>
 
-    </body>
+                <!-- Error Message -->
+                <%
+                    String msg = (String) request.getAttribute("msg");
+                    if (msg != null) {
+                %>
+                <div class="alert alert-danger text-center small">
+                    <%= msg %>
+                </div>
+                <%
+                    }
+                %>
+
+                <form action="ARegistration" method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Username</label>
+                        <input type="text" name="aunm" class="form-control form-control-lg" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="aeid" class="form-control form-control-lg" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" name="apass" class="form-control form-control-lg" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Confirm Password</label>
+                        <input type="password" name="acfmpass" class="form-control form-control-lg" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        Register as Admin
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-3 small">
+                    <a href="aLogin.jsp">Already have admin account? Login</a><br>
+                    <a href="index.jsp">Back to User Page</a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
 </html>

@@ -2,32 +2,70 @@
 
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Admin Login Page</title>
-    </head>
-    <body>
+<head>
+    <title>Admin Login</title>
 
-        <h1>Login Page</h1>
+    <!-- Mobile responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <!-- Error Message from Servlet -->
-        <%
-            String msg = (String) request.getAttribute("msg");
-            if (msg != null) {
-        %>
-        <p style="color:red;"><%= msg%></p>
-        <%
-            }
-        %>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
 
-        <form action="alogin" method="post">
-            Enter Email-Id :
-            <input type="email" name="email" required><br><br>
+<body class="bg-light d-flex align-items-center min-vh-100">
 
-            Enter Password :
-            <input type="password" name="pass" required><br><br>
+<div class="container">
 
-            <input type="submit" value="Login">
-        </form>
+    <div class="row justify-content-center">
 
-    </body>
+        <!-- Responsive column -->
+        <div class="col-12 col-sm-10 col-md-8 col-lg-5">
+
+            <div class="card shadow-lg border-0 rounded-4 p-3 p-md-4">
+
+                <h2 class="text-center text-primary mb-3 mb-md-4">
+                    Admin Login
+                </h2>
+
+                <!-- Error Message -->
+                <%
+                    String msg = (String) request.getAttribute("msg");
+                    if (msg != null) {
+                %>
+                <div class="alert alert-danger text-center small">
+                    <%= msg %>
+                </div>
+                <%
+                    }
+                %>
+
+                <form action="alogin" method="post">
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Email</label>
+                        <input type="email" name="email" class="form-control form-control-lg" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold">Password</label>
+                        <input type="password" name="pass" class="form-control form-control-lg" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        Login as Admin
+                    </button>
+
+                </form>
+
+                <div class="text-center mt-3 small">
+                    <a href="index.jsp">Back to User Registration</a>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
 </html>
