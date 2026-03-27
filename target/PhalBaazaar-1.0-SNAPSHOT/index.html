@@ -1,10 +1,20 @@
-<!DOCTYPE html>
 <html>
     <head>
-        <title>Start Page</title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Registration Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <h1 style="color: red;"> Welcome To PhalBazar</h1>
+        
+        <form action="register" method="post">
+            Enter The Username :<input type="text" name="cunm"><br><br>
+            Enter The Email-id :<input type="email" name="ceid"><br><br>
+            Enter The Password :<input type="password" name="cpass"><br><br>
+            Enter The Conform Password :<input type="password" name="cfmpass"><br><br>
+
+            <input type="submit" value="Register">
+            <a href="login.jsp">Login</a><br>
+            For Admin : <a href="AReg.jsp">Admin</a>
+
+        </form>
     </body>
 </html>
