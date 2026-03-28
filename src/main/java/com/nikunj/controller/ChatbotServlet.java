@@ -24,13 +24,13 @@ import org.json.JSONObject;
 public class ChatbotServlet extends HttpServlet {
 
     // Make sure your API key has NO spaces around it!
-    private static final String API_KEY = "AIzaSyADZNArv25QRAY1fUVgz7pVf__9f4Ei2Bs"; 
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" + API_KEY;
+    private static final String API_KEY = "AIzaSyADZNArv25QRAY1fUVgz7pVf__9f4Ei2Bs";
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-        
+
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         PrintWriter out = res.getWriter();
@@ -42,7 +42,7 @@ public class ChatbotServlet extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-            
+
             JSONObject requestJson = new JSONObject(sb.toString());
             String userMessage = requestJson.getString("message");
 
@@ -59,14 +59,14 @@ public class ChatbotServlet extends HttpServlet {
 
                 try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                     String jsonResponse = EntityUtils.toString(response.getEntity());
-                    
+
                     // THIS WILL PRINT GOOGLE'S EXACT RESPONSE TO NETBEANS!
                     System.out.println("========== GEMINI API RESPONSE ==========");
                     System.out.println(jsonResponse);
                     System.out.println("=========================================");
-                    
+
                     JSONObject jsonResponseObj = new JSONObject(jsonResponse);
-                    
+
                     // Crash-proof check: Did Google send an error?
                     if (jsonResponseObj.has("error")) {
                         String errorMsg = jsonResponseObj.getJSONObject("error").getString("message");
