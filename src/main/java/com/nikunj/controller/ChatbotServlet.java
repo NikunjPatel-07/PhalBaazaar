@@ -16,21 +16,22 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-// FORCED CORRECT IMPORTS:
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 @WebServlet(name = "ChatbotServlet", urlPatterns = {"/chat"})
 public class ChatbotServlet extends HttpServlet {
 
-    // Make sure your API key has NO spaces around it!
-    private static final String API_KEY = "AIzaSyADZNArv25QRAY1fUVgz7pVf__9f4Ei2Bs";
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY;
+    // IMPORTANT: Paste your API key back in here!
+    private static final String API_KEY = "AIzaSyADZNArv25QRAY1fUVgz7pVf__9f4Ei2Bs"; 
+    
+    // THE FIX: Pointing strictly to Gemini 2.0 Flash
+    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
             throws ServletException, IOException {
-
+        
         res.setContentType("application/json");
         res.setCharacterEncoding("UTF-8");
         PrintWriter out = res.getWriter();
@@ -42,7 +43,7 @@ public class ChatbotServlet extends HttpServlet {
             while ((line = reader.readLine()) != null) {
                 sb.append(line);
             }
-
+            
             JSONObject requestJson = new JSONObject(sb.toString());
             String userMessage = requestJson.getString("message");
 
@@ -59,22 +60,15 @@ public class ChatbotServlet extends HttpServlet {
 
                 try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                     String jsonResponse = EntityUtils.toString(response.getEntity());
-
-                    // THIS WILL PRINT GOOGLE'S EXACT RESPONSE TO NETBEANS!
-                    System.out.println("========== GEMINI API RESPONSE ==========");
-                    System.out.println(jsonResponse);
-                    System.out.println("=========================================");
-
+                    
                     JSONObject jsonResponseObj = new JSONObject(jsonResponse);
-
-                    // Crash-proof check: Did Google send an error?
+                    
                     if (jsonResponseObj.has("error")) {
                         String errorMsg = jsonResponseObj.getJSONObject("error").getString("message");
                         out.print("{\"reply\": \"Google API Error: " + errorMsg + "\"}");
                         return;
                     }
 
-                    // If no error, get the answer
                     String aiText = jsonResponseObj.getJSONArray("candidates")
                             .getJSONObject(0)
                             .getJSONObject("content")
