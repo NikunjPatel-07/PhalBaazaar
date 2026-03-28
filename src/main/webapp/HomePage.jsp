@@ -177,7 +177,7 @@
             <div id="chat-history" style="height: 250px; overflow-y: auto; padding: 10px; font-size: 14px; background: #f8f9fa;">
                 <p style="margin: 5px 0; padding: 8px; background: #e9ecef; border-radius: 10px; display: inline-block;">Hello! How can I help you find fresh produce today?</p>
             </div>
-            
+
             <div style="display: flex; padding: 10px; border-top: 1px solid #ddd;">
                 <input type="text" id="chat-input" placeholder="Ask about fruits..." style="flex: 1; border: 1px solid #ccc; border-radius: 5px; padding: 5px;" onkeypress="handleKeyPress(event)">
                 <button onclick="sendMessage()" style="background: #198754; color: white; border: none; padding: 5px 10px; margin-left: 5px; border-radius: 5px; cursor: pointer;">Send</button>
@@ -207,12 +207,11 @@
 
                 const chatHistory = document.getElementById('chat-history');
 
-                // Show user message
-                chatHistory.innerHTML += `<div style="text-align: right;"><p style="margin: 5px 0; padding: 8px; background: #198754; color: white; border-radius: 10px; display: inline-block;">${message}</p></div>`;
+                chatHistory.innerHTML += '<div style="text-align: right;"><p style="margin: 5px 0; padding: 8px; background: #198754; color: white; border-radius: 10px; display: inline-block; word-wrap: break-word; max-width: 80%;">' + message + '</p></div>';
+
                 input.value = '';
                 chatHistory.scrollTop = chatHistory.scrollHeight;
 
-                // Send to Servlet
                 fetch('chat', {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
@@ -220,12 +219,12 @@
                 })
                         .then(response => response.json())
                         .then(data => {
-                            // Show AI response
-                            chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #e9ecef; border-radius: 10px; display: inline-block;">${data.reply}</p></div>`;
+                            chatHistory.innerHTML += '<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #e9ecef; color: black; border-radius: 10px; display: inline-block; word-wrap: break-word; max-width: 80%;">' + data.reply + '</p></div>';
                             chatHistory.scrollTop = chatHistory.scrollHeight;
                         })
                         .catch(error => {
-                            chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #ffcccc; border-radius: 10px; display: inline-block;">Network Error!</p></div>`;
+                            chatHistory.innerHTML += '<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #ffcccc; color: #900; border-radius: 10px; display: inline-block;">Network Error!</p></div>';
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
                         });
             }
         </script>
