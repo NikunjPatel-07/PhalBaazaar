@@ -69,10 +69,23 @@ public class AddProduct extends HttpServlet {
                         break;
                     }
 
+                    java.io.File tempFile = java.io.File.createTempFile("upload_", ".jpg");
+                    tempFile.deleteOnExit();
+
+                    try (java.io.InputStream inputStream = part.getInputStream()) {
+                        java.nio.file.Files.copy(
+                                inputStream,
+                                tempFile.toPath(),
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING
+                        );
+                    }
+
                     Map uploadResult = cloudinary.uploader().upload(
-                            part.getInputStream(),
+                            tempFile,
                             ObjectUtils.emptyMap()
                     );
+
+                    tempFile.delete();
 
                     String imageUrl = (String) uploadResult.get("secure_url");
 
