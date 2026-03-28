@@ -33,7 +33,7 @@ public class ARegistration extends HttpServlet {
                 ps.setString(2, email);
                 ps.setString(3, password);
                 ps.executeUpdate();
-                res.sendRedirect("alogin.jsp");
+                res.sendRedirect("aLogin.jsp");
 
             } catch (Exception e) {
                 out.println(e);
