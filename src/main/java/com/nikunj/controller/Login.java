@@ -29,7 +29,7 @@ public class Login extends HttpServlet {
             if (rs.next()) {
                 res.sendRedirect("HomePage.jsp");
             } else {
-                res.sendRedirect("index.html");
+                res.sendRedirect("index.jsp");
             }
         } catch (Exception e) {
             out.println(e);

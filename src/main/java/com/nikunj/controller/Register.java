@@ -38,7 +38,7 @@ public class Register extends HttpServlet {
                 out.println(e);
             }
         } else{
-            res.sendRedirect("index.html");
+            res.sendRedirect("index.jsp");
             
         }
 
