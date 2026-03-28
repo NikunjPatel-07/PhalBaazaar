@@ -6,7 +6,6 @@ import java.sql.*;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
@@ -43,7 +42,6 @@ public class AddProduct extends HttpServlet {
 
             con.setAutoCommit(false);
 
-            // ✅ Insert product
             PreparedStatement ps = con.prepareStatement(
                     "INSERT INTO products(name,price) VALUES(?,?)",
                     Statement.RETURN_GENERATED_KEYS
@@ -60,7 +58,6 @@ public class AddProduct extends HttpServlet {
                 productId = rs.getInt(1);
             }
 
-            // ✅ Handle images
             Collection<Part> parts = req.getParts();
             int imageCount = 0;
 
@@ -72,18 +69,15 @@ public class AddProduct extends HttpServlet {
                         break;
                     }
 
-                    // 🚀 Upload to Cloudinary
                     Map uploadResult = cloudinary.uploader().upload(
                             part.getInputStream(),
                             ObjectUtils.emptyMap()
                     );
 
-                    // ✅ Get image URL
                     String imageUrl = (String) uploadResult.get("secure_url");
 
                     System.out.println("Uploaded to Cloudinary: " + imageUrl);
 
-                    // ✅ Save URL in DB
                     PreparedStatement imgPs = con.prepareStatement(
                             "INSERT INTO product_images(product_id,image_path) VALUES(?,?)"
                     );
