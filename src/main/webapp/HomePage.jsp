@@ -89,7 +89,7 @@
                                 %>
                                 <div>
                                     <img class="w-100 product-img"
-                                         src="<%= request.getContextPath()%>/product-image?name=<%= rsImage.getString("image_path")%>">
+                                         src="<%= request.getContextPath()%>/product-image?name=<%= rsImage.getString("image_path")%>"
                                 </div>
                                 <% }
                             rsImage.close();
