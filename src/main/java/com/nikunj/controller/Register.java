@@ -32,7 +32,7 @@ public class Register extends HttpServlet {
                 ps.setString(2, email);
                 ps.setString(3, password);
                 ps.executeUpdate();
-                res.sendRedirect("login.html");
+                res.sendRedirect("login.jsp");
 
             } catch (Exception e) {
                 out.println(e);
