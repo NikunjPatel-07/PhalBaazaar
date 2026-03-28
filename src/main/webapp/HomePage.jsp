@@ -83,11 +83,11 @@
                                     while (rsImage.next()) {
                                 %>
                                 <div>
-                                    <img class="w-100 product-img" src="<%= rsImage.getString("image_path") %>" alt="Product Image">
+                                    <img class="w-100 product-img" src="<%= rsImage.getString("image_path")%>" alt="Product Image">
                                 </div>
                                 <% }
-                            rsImage.close();
-                            psImage.close();%>
+                                    rsImage.close();
+                                    psImage.close();%>
                             </div>
 
                             <div class="card-body text-center">
@@ -147,29 +147,29 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
 
         <script>
-            $(document).ready(function () {
-                $('.owl-carousel').owlCarousel({
-                    items: 1,
-                    loop: true,
-                    dots: true,
-                    autoplay: true
-                });
-            });
+                                        $(document).ready(function () {
+                                            $('.owl-carousel').owlCarousel({
+                                                items: 1,
+                                                loop: true,
+                                                dots: true,
+                                                autoplay: true
+                                            });
+                                        });
 
-            function increase(btn) {
-                let input = btn.parentElement.querySelector("input");
-                input.value = parseInt(input.value) + 1;
-            }
+                                        function increase(btn) {
+                                            let input = btn.parentElement.querySelector("input");
+                                            input.value = parseInt(input.value) + 1;
+                                        }
 
-            function decrease(btn) {
-                let input = btn.parentElement.querySelector("input");
-                let val = parseInt(input.value);
-                if (val > 0)
-                    input.value = val - 1;
-            }
+                                        function decrease(btn) {
+                                            let input = btn.parentElement.querySelector("input");
+                                            let val = parseInt(input.value);
+                                            if (val > 0)
+                                                input.value = val - 1;
+                                        }
         </script>
-        
-        <div id="chatbot-container" style="position: fixed; bottom: 80px; right: 20px; width: 300px; background: white; border-radius: 10px; box-shadow: 0px 5px 15px rgba(0,0,0,0.2); z-index: 1050; display: none; flex-direction: column;">
+
+        <div id="chatbot-container" style="position: fixed; bottom: 150px; right: 20px; width: 300px; background: white; border-radius: 10px; box-shadow: 0px 5px 15px rgba(0,0,0,0.2); z-index: 1050; display: none; flex-direction: column;">
             <div style="background: #198754; color: white; padding: 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; font-weight: bold; display: flex; justify-content: space-between;">
                 <span>PhalBazar AI Assistant</span>
                 <span style="cursor: pointer;" onclick="toggleChat()">✖</span>
@@ -177,13 +177,14 @@
             <div id="chat-history" style="height: 250px; overflow-y: auto; padding: 10px; font-size: 14px; background: #f8f9fa;">
                 <p style="margin: 5px 0; padding: 8px; background: #e9ecef; border-radius: 10px; display: inline-block;">Hello! How can I help you find fresh produce today?</p>
             </div>
+            
             <div style="display: flex; padding: 10px; border-top: 1px solid #ddd;">
                 <input type="text" id="chat-input" placeholder="Ask about fruits..." style="flex: 1; border: 1px solid #ccc; border-radius: 5px; padding: 5px;" onkeypress="handleKeyPress(event)">
                 <button onclick="sendMessage()" style="background: #198754; color: white; border: none; padding: 5px 10px; margin-left: 5px; border-radius: 5px; cursor: pointer;">Send</button>
             </div>
         </div>
 
-        <button onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; background: #198754; color: white; border: none; border-radius: 50px; width: 50px; height: 50px; font-size: 24px; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); z-index: 1050; cursor: pointer;">
+        <button onclick="toggleChat()" style="position: fixed; bottom: 90px; right: 20px; background: #198754; color: white; border: none; border-radius: 50px; width: 50px; height: 50px; font-size: 24px; box-shadow: 0px 4px 10px rgba(0,0,0,0.2); z-index: 1050; cursor: pointer;">
             💬
         </button>
 
@@ -194,16 +195,18 @@
             }
 
             function handleKeyPress(e) {
-                if (e.key === 'Enter') sendMessage();
+                if (e.key === 'Enter')
+                    sendMessage();
             }
 
             function sendMessage() {
                 const input = document.getElementById('chat-input');
                 const message = input.value.trim();
-                if (!message) return;
+                if (!message)
+                    return;
 
                 const chatHistory = document.getElementById('chat-history');
-                
+
                 // Show user message
                 chatHistory.innerHTML += `<div style="text-align: right;"><p style="margin: 5px 0; padding: 8px; background: #198754; color: white; border-radius: 10px; display: inline-block;">${message}</p></div>`;
                 input.value = '';
@@ -212,18 +215,18 @@
                 // Send to Servlet
                 fetch('chat', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: message })
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({message: message})
                 })
-                .then(response => response.json())
-                .then(data => {
-                    // Show AI response
-                    chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #e9ecef; border-radius: 10px; display: inline-block;">${data.reply}</p></div>`;
-                    chatHistory.scrollTop = chatHistory.scrollHeight;
-                })
-                .catch(error => {
-                    chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #ffcccc; border-radius: 10px; display: inline-block;">Network Error!</p></div>`;
-                });
+                        .then(response => response.json())
+                        .then(data => {
+                            // Show AI response
+                            chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #e9ecef; border-radius: 10px; display: inline-block;">${data.reply}</p></div>`;
+                            chatHistory.scrollTop = chatHistory.scrollHeight;
+                        })
+                        .catch(error => {
+                            chatHistory.innerHTML += `<div style="text-align: left;"><p style="margin: 5px 0; padding: 8px; background: #ffcccc; border-radius: 10px; display: inline-block;">Network Error!</p></div>`;
+                        });
             }
         </script>
 

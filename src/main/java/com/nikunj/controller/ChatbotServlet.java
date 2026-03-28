@@ -3,6 +3,9 @@ package com.nikunj.controller;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -18,15 +21,13 @@ import org.apache.http.util.EntityUtils;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import com.nikunj.model.DBConnection;
 
 @WebServlet(name = "ChatbotServlet", urlPatterns = {"/chat"})
 public class ChatbotServlet extends HttpServlet {
 
-    // IMPORTANT: Paste your API key back in here!
-    private static final String API_KEY = "AIzaSyADZNArv25QRAY1fUVgz7pVf__9f4Ei2Bs"; 
-    
-    // THE FIX: Pointing strictly to Gemini 2.0 Flash
-    private static final String API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + API_KEY;
+    private static final String API_KEY = System.getenv("GROQ_API_KEY"); 
+    private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse res)
@@ -37,6 +38,7 @@ public class ChatbotServlet extends HttpServlet {
         PrintWriter out = res.getWriter();
 
         try {
+            // 1. Read the user's message
             BufferedReader reader = req.getReader();
             StringBuilder sb = new StringBuilder();
             String line;
@@ -47,34 +49,66 @@ public class ChatbotServlet extends HttpServlet {
             JSONObject requestJson = new JSONObject(sb.toString());
             String userMessage = requestJson.getString("message");
 
-            JSONObject part = new JSONObject().put("text", "You are a shopping assistant for PhalBazar. User says: " + userMessage);
-            JSONArray parts = new JSONArray().put(part);
-            JSONObject content = new JSONObject().put("parts", parts);
-            JSONArray contents = new JSONArray().put(content);
-            JSONObject payload = new JSONObject().put("contents", contents);
+            StringBuilder inventoryContext = new StringBuilder("Current PhalBazar Inventory:\n");
+            try (Connection con = DBConnection.getConnection();
+                 PreparedStatement ps = con.prepareStatement("SELECT name, price FROM products");
+                 ResultSet rs = ps.executeQuery()) {
+                
+                while (rs.next()) {
+                    inventoryContext.append("- ").append(rs.getString("name"))
+                                    .append(" ($").append(rs.getDouble("price")).append(")\n");
+                }
+            } catch (Exception e) {
+                inventoryContext.append("(Inventory data temporarily unavailable)");
+                e.printStackTrace();
+            }
 
+            JSONArray messages = new JSONArray();
+            
+            JSONObject systemMessage = new JSONObject();
+            systemMessage.put("role", "system");
+            
+            String strictPrompt = 
+                "You are a strict customer support bot for PhalBazar, a fresh produce e-commerce site. " +
+                "You ONLY answer questions about the products listed in the context below. " +
+                "If a user asks about anything else (coding, general knowledge, other websites), reply exactly with: 'I can only assist you with PhalBazar products.' " +
+                "Do NOT make up products. Do NOT make up prices. Be brief.\n\n" +
+                "CONTEXT:\n" + inventoryContext.toString();
+                
+            systemMessage.put("content", strictPrompt);
+            messages.put(systemMessage);
+            
+            // User prompt
+            JSONObject promptMessage = new JSONObject();
+            promptMessage.put("role", "user");
+            promptMessage.put("content", userMessage);
+            messages.put(promptMessage);
+
+            JSONObject payload = new JSONObject();
+            payload.put("model", "llama3-8b-8192"); 
+            payload.put("messages", messages);
+
+            // 3. Send to Groq
             try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
                 HttpPost httpPost = new HttpPost(API_URL);
                 httpPost.setHeader("Content-Type", "application/json");
+                httpPost.setHeader("Authorization", "Bearer " + API_KEY); 
                 httpPost.setEntity(new StringEntity(payload.toString(), "UTF-8"));
 
                 try (CloseableHttpResponse response = httpClient.execute(httpPost)) {
                     String jsonResponse = EntityUtils.toString(response.getEntity());
-                    
                     JSONObject jsonResponseObj = new JSONObject(jsonResponse);
                     
                     if (jsonResponseObj.has("error")) {
                         String errorMsg = jsonResponseObj.getJSONObject("error").getString("message");
-                        out.print("{\"reply\": \"Google API Error: " + errorMsg + "\"}");
+                        out.print("{\"reply\": \"Groq API Error: " + errorMsg + "\"}");
                         return;
                     }
 
-                    String aiText = jsonResponseObj.getJSONArray("candidates")
+                    String aiText = jsonResponseObj.getJSONArray("choices")
                             .getJSONObject(0)
-                            .getJSONObject("content")
-                            .getJSONArray("parts")
-                            .getJSONObject(0)
-                            .getString("text");
+                            .getJSONObject("message")
+                            .getString("content");
 
                     JSONObject finalResponse = new JSONObject();
                     finalResponse.put("reply", aiText);
@@ -84,7 +118,7 @@ public class ChatbotServlet extends HttpServlet {
 
         } catch (Exception e) {
             e.printStackTrace();
-            out.print("{\"reply\": \"Server Error: Check NetBeans logs!\"}");
+            out.print("{\"reply\": \"Server Error! Check NetBeans output.\"}");
         } finally {
             out.flush();
         }
