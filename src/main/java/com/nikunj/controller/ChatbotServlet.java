@@ -26,7 +26,6 @@ import com.nikunj.model.DBConnection;
 @WebServlet(name = "ChatbotServlet", urlPatterns = {"/chat"})
 public class ChatbotServlet extends HttpServlet {
 
-    // Notice we removed the static API_KEY from here!
     private static final String API_URL = "https://api.groq.com/openai/v1/chat/completions";
 
     @Override
@@ -37,10 +36,7 @@ public class ChatbotServlet extends HttpServlet {
         res.setCharacterEncoding("UTF-8");
         PrintWriter out = res.getWriter();
 
-        // ==========================================
-        // THE FIX: Grab the key AT RUNTIME
-        // ==========================================
-        String apiKey = System.getenv("GROQ_API_KEY");
+        String apiKey = System.getProperty("GROQ_API_KEY");
         
         if (apiKey == null || apiKey.trim().isEmpty()) {
             out.print("{\"reply\": \"System Error: Tomcat cannot find the GROQ_API_KEY environment variable! Check Render.\"}");
@@ -49,7 +45,6 @@ public class ChatbotServlet extends HttpServlet {
         }
 
         try {
-            // 1. Read the user's message
             BufferedReader reader = req.getReader();
             StringBuilder sb = new StringBuilder();
             String line;
@@ -60,7 +55,6 @@ public class ChatbotServlet extends HttpServlet {
             JSONObject requestJson = new JSONObject(sb.toString());
             String userMessage = requestJson.getString("message");
 
-            // RAG STEP 1: Fetch Live Inventory Context
             StringBuilder inventoryContext = new StringBuilder("Current PhalBazar Inventory:\n");
             try (Connection con = DBConnection.getConnection();
                  PreparedStatement ps = con.prepareStatement("SELECT name, price FROM products");
@@ -75,7 +69,6 @@ public class ChatbotServlet extends HttpServlet {
                 e.printStackTrace();
             }
 
-            // RAG STEP 2: Strict System Prompt
             JSONArray messages = new JSONArray();
             
             JSONObject systemMessage = new JSONObject();
